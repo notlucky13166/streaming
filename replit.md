@@ -13,6 +13,11 @@ Lukie's Streams is a full-stack movie and live streaming web application. The ap
 - ✅ Created startup script (start.sh) to run both frontend and backend concurrently
 - ✅ Configured deployment settings for autoscale deployment
 - ✅ Set up workflow "Development Server" running on port 5000
+- ✅ **NEW: Integrated vidsrc.dev API for movie playback**
+  - Added MoviePlayer component with vidsrc.dev iframe embed
+  - Backend now fetches IMDb IDs from TMDB API (external_ids)
+  - Movies page links to player at /movie/:id route
+  - Player displays movie details and embedded vidsrc.dev stream
 
 ## Project Architecture
 
@@ -33,7 +38,8 @@ Lukie's Streams is a full-stack movie and live streaming web application. The ap
 - Rate limiting middleware
 
 **External APIs:**
-- TMDB API (The Movie Database) - for movie data
+- TMDB API (The Movie Database) - for movie data and IMDb IDs
+- vidsrc.dev - for movie streaming/playback (no API key required)
 - Streami API - for live streaming functionality
 
 ### Project Structure
