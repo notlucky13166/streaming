@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Live from './pages/Live';
 import StreamViewer from './pages/StreamViewer';
 import Movies from './pages/Movies';
+import MoviePlayer from './pages/MoviePlayer';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Admin from './pages/Admin';
@@ -23,6 +24,7 @@ function App() {
               <Route path="/live" element={<Live />} />
               <Route path="/stream/:id" element={<StreamViewer />} />
               <Route path="/movies" element={<Movies />} />
+              <Route path="/movie/:id" element={<MoviePlayer />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/admin" element={<Admin />} />

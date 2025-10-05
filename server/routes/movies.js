@@ -91,12 +91,13 @@ router.get('/:id', async (req, res) => {
     const response = await axios.get(`${TMDB_BASE_URL}/movie/${id}`, {
       params: {
         api_key: TMDB_API_KEY,
-        append_to_response: 'credits,videos,similar'
+        append_to_response: 'credits,videos,similar,external_ids'
       }
     });
 
     const movie = {
       id: response.data.id,
+      imdbId: response.data.external_ids?.imdb_id || null,
       title: response.data.title,
       overview: response.data.overview,
       posterPath: response.data.poster_path,

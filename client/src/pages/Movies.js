@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   PlayIcon, 
@@ -8,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Movies = () => {
+  const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -95,6 +97,7 @@ const Movies = () => {
           {movies.map((movie) => (
             <div
               key={movie.id}
+              onClick={() => navigate(`/movie/${movie.id}`)}
               className="bg-slate-800 rounded-lg overflow-hidden card-hover cursor-pointer group"
             >
               {/* Movie Poster */}
