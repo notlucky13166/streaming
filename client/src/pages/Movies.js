@@ -3,7 +3,8 @@ import axios from 'axios';
 import { 
   PlayIcon, 
   StarIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  FilmIcon
 } from '@heroicons/react/24/outline';
 
 const Movies = () => {
