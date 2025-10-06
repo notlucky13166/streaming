@@ -1,11 +1,26 @@
 # Lukie's Streams - Replit Project
 
 ## Overview
-Lukie's Streams is a full-stack movie and live streaming web application. The app allows users to browse movies via the TMDB API, watch live streams via the Streami platform, and includes user authentication with JWT and an admin panel for stream management.
+Lukie's Streams is a full-stack movie and live streaming web application. The app allows users to browse movies via the TMDB API, watch live streams, and includes an admin panel for stream management. All pages are now public - no authentication required.
 
-**Current Status:** Successfully configured for Replit environment. The application is running with both frontend and backend operational.
+**Current Status:** Successfully imported and running on Replit. Movies feature is fully functional with TMDB API integration. Streams feature requires MongoDB setup to function.
 
-## Recent Changes (October 5, 2025)
+## Recent Changes (October 6, 2025)
+- ✅ **Removed all authentication** - Made app completely public
+  - Deleted Login and Register pages
+  - Removed AuthContext and all auth dependencies
+  - Cleaned up Navbar to remove login/register buttons
+  - Updated Admin page to work without authentication
+  - Removed server auth routes, middleware, and User model
+- ✅ **Fixed rate limiter configuration** - Added `trust proxy` setting for Replit environment
+- ✅ **Made MongoDB optional** - App now runs without crashing when MongoDB isn't configured
+  - Streams feature gracefully handles missing database
+  - Clear error messages returned when streams are unavailable
+- ✅ **Configured TMDB API** - Movies feature fully operational with real movie data
+- ✅ **Installed all dependencies** - Both client and server packages installed
+- ✅ **Verified functionality** - Application tested and working correctly
+
+## Previous Changes (October 5, 2025)
 - ✅ Configured React dev server to run on port 5000 with proper host settings for Replit proxy
 - ✅ Updated backend server to run on port 3001 (localhost)
 - ✅ Fixed missing FilmIcon import in Movies.js component
@@ -31,11 +46,9 @@ Lukie's Streams is a full-stack movie and live streaming web application. The ap
 
 **Backend:**
 - Node.js & Express.js
-- MongoDB with Mongoose ORM
-- JWT for authentication
-- bcryptjs for password hashing
+- MongoDB with Mongoose ORM (optional)
 - Helmet & CORS for security
-- Rate limiting middleware
+- Rate limiting middleware with trust proxy enabled
 
 **External APIs:**
 - TMDB API (The Movie Database) - for movie data and IMDb IDs
@@ -48,16 +61,14 @@ lukies-streams/
 ├── client/                 # React frontend (runs on port 5000)
 │   ├── public/            # Static files
 │   ├── src/
-│   │   ├── components/    # Reusable React components
-│   │   ├── contexts/      # React Context (AuthContext)
-│   │   ├── pages/         # Page components (Home, Movies, Live, etc.)
+│   │   ├── components/    # Reusable React components (Navbar)
+│   │   ├── pages/         # Page components (Home, Movies, Live, Admin, etc.)
 │   │   ├── App.js
 │   │   └── index.js
 │   └── package.json
 ├── server/                # Node.js backend (runs on port 3001)
-│   ├── models/           # MongoDB schemas (User, Stream)
-│   ├── routes/           # API routes (auth, movies, streams)
-│   ├── middleware/       # Express middleware (auth)
+│   ├── models/           # MongoDB schemas (Stream)
+│   ├── routes/           # API routes (movies, streams)
 │   └── index.js          # Server entry point
 ├── start.sh              # Startup script for both servers
 ├── package.json          # Server dependencies
@@ -70,21 +81,18 @@ lukies-streams/
 - **Proxy:** Frontend proxies API requests to localhost:3001
 
 ### Environment Variables
-The following environment variables are required (managed via Replit Secrets):
+The following environment variables are available (managed via Replit Secrets):
 
+**Required:**
+- `TMDB_API_KEY` - API key for The Movie Database (required for movies feature)
+
+**Optional:**
+- `MONGODB_URI` - MongoDB connection string (required only for streams feature)
+- `STREAMI_API_KEY` - API key for Streami platform (required only for streams feature)
 - `PORT` - Backend server port (default: 3001)
 - `NODE_ENV` - Environment mode (development/production)
-- `MONGODB_URI` - MongoDB connection string
-- `JWT_SECRET` - Secret key for JWT token signing
-- `TMDB_API_KEY` - API key for The Movie Database (optional for basic testing)
-- `STREAMI_API_KEY` - API key for Streami platform (optional for basic testing)
 
 ## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current authenticated user
 
 ### Movies
 - `GET /api/movies/popular` - Get popular movies from TMDB
@@ -92,11 +100,13 @@ The following environment variables are required (managed via Replit Secrets):
 - `GET /api/movies/:id` - Get movie details by ID
 
 ### Streams
+*Note: All stream endpoints require MongoDB to be configured. They return a 503 error with a clear message when MongoDB is not available.*
+
 - `GET /api/streams` - Get all active streams
 - `GET /api/streams/:id` - Get stream by ID
-- `POST /api/streams` - Create new stream (Admin only)
-- `PATCH /api/streams/:id/status` - Update stream status (Admin only)
-- `DELETE /api/streams/:id` - Delete stream (Admin only)
+- `POST /api/streams` - Create new stream
+- `PATCH /api/streams/:id/status` - Update stream status
+- `DELETE /api/streams/:id` - Delete stream
 - `POST /api/streams/:id/viewers` - Update viewer count
 
 ## Deployment
@@ -114,22 +124,26 @@ The "Development Server" workflow automatically:
 3. Both servers run concurrently via start.sh script
 
 ### Known Issues & Warnings
-- ESLint warnings about unused imports (PencilIcon in Admin.js) - non-critical
-- React Hook dependency warnings in StreamViewer.js - non-critical
-- MongoDB connection required for authentication features to work
-- TMDB and Streami API keys required for full functionality
+- React Router future flag warnings - non-critical, informational only
+- React Hook dependency warnings in MoviePlayer.js and StreamViewer.js - non-critical
+- **Streams feature requires MongoDB** - Set MONGODB_URI environment variable to enable
+- **Live streaming requires Streami API** - Set STREAMI_API_KEY environment variable to enable stream creation
 
-### Database Setup
-- The app expects MongoDB connection
-- Default connection: `mongodb://localhost:27017/lukies-streams`
-- For production, set MONGODB_URI environment variable to cloud MongoDB instance (e.g., MongoDB Atlas)
+### Database Setup (Optional)
+The streams feature requires MongoDB. If you want to enable streams:
+1. Create a MongoDB database (MongoDB Atlas recommended for cloud hosting)
+2. Add the connection string as MONGODB_URI in Replit Secrets
+3. Restart the application
+
+Without MongoDB, the movies feature will work perfectly, and stream endpoints will return helpful error messages.
 
 ## User Preferences
 *No specific user preferences recorded yet*
 
 ## Future Enhancements
-- Set up MongoDB cloud instance for production
-- Configure API keys for TMDB and Streami
-- Add more comprehensive error handling
+- Set up MongoDB cloud instance to enable streams feature
+- Configure Streami API key for live stream creation
+- Add user accounts and personalization (currently removed for public access)
 - Implement real-time viewer count updates via WebSockets
 - Add video upload functionality
+- Improve error handling for edge cases
