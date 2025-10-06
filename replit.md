@@ -52,8 +52,8 @@ Lukie's Streams is a full-stack movie and live streaming web application. The ap
 
 **External APIs:**
 - TMDB API (The Movie Database) - for movie data and IMDb IDs
-- vidsrc.dev - for movie streaming/playback (no API key required)
-- Streami API - for live streaming functionality
+- vidsrc.xyz - for movie streaming/playback (no API key required)
+- Streami API (streami.su) - for live sports streaming functionality
 
 ### Project Structure
 ```

@@ -59,7 +59,9 @@ const MoviePlayer = () => {
   }
 
   const vidsrcUrl = movie.imdbId 
-    ? `https://vidsrc.dev/embed/movie/${movie.imdbId}`
+    ? `https://vidsrc.xyz/embed/movie?imdb=${movie.imdbId}`
+    : movie.id 
+    ? `https://vidsrc.xyz/embed/movie?tmdb=${movie.id}`
     : null;
 
   return (
