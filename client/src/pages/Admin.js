@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import {
   PlusIcon,
   TrashIcon,
-  PencilIcon,
   VideoCameraIcon,
   SignalIcon,
   UsersIcon
 } from '@heroicons/react/24/outline';
 
 const Admin = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [streams, setStreams] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -23,12 +18,8 @@ const Admin = () => {
   });
 
   useEffect(() => {
-    if (user?.role !== 'admin') {
-      navigate('/');
-      return;
-    }
     fetchStreams();
-  }, [user, navigate]);
+  }, []);
 
   const fetchStreams = async () => {
     try {

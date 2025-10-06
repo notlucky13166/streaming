@@ -1,17 +1,23 @@
 const express = require('express');
 const axios = require('axios');
 const Stream = require('../models/Stream');
-const auth = require('../middleware/auth');
 const router = express.Router();
 
 const STREAMI_API_KEY = process.env.STREAMI_API_KEY;
 const STREAMI_BASE_URL = 'https://api.streami.su/v1';
 
+const checkMongoDBAvailable = () => {
+  return process.env.MONGODB_URI !== undefined;
+};
+
 // Get all active streams
 router.get('/', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
     const streams = await Stream.find({ status: 'active' })
-      .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
 
     res.json(streams);
@@ -23,9 +29,12 @@ router.get('/', async (req, res) => {
 
 // Get stream by ID
 router.get('/:id', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
-    const stream = await Stream.findById(req.params.id)
-      .populate('createdBy', 'name email');
+    const stream = await Stream.findById(req.params.id);
 
     if (!stream) {
       return res.status(404).json({ error: 'Stream not found' });
@@ -38,14 +47,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new stream (Admin only)
-router.post('/', auth, async (req, res) => {
+// Create new stream
+router.post('/', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Admin access required' });
-    }
-
     const { title, description } = req.body;
 
     if (!title || !description) {
@@ -77,7 +85,6 @@ router.post('/', auth, async (req, res) => {
       streamiId: streamiData.id,
       hlsUrl: streamiData.hls_url,
       status: 'active',
-      createdBy: req.user.id,
       thumbnail: streamiData.thumbnail || ''
     });
 
@@ -91,12 +98,12 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update stream status
-router.patch('/:id/status', auth, async (req, res) => {
+router.patch('/:id/status', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Admin access required' });
-    }
-
     const { status } = req.body;
     
     if (!['active', 'inactive', 'ended'].includes(status)) {
@@ -107,7 +114,7 @@ router.patch('/:id/status', auth, async (req, res) => {
       req.params.id,
       { status },
       { new: true }
-    ).populate('createdBy', 'name email');
+    );
 
     if (!stream) {
       return res.status(404).json({ error: 'Stream not found' });
@@ -120,13 +127,13 @@ router.patch('/:id/status', auth, async (req, res) => {
   }
 });
 
-// Delete stream (Admin only)
-router.delete('/:id', auth, async (req, res) => {
+// Delete stream
+router.delete('/:id', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Admin access required' });
-    }
-
     const stream = await Stream.findById(req.params.id);
 
     if (!stream) {
@@ -152,8 +159,12 @@ router.delete('/:id', auth, async (req, res) => {
 
 // Update viewer count
 router.post('/:id/viewers', async (req, res) => {
+  if (!checkMongoDBAvailable()) {
+    return res.status(503).json({ error: 'Streaming feature is not configured. Please set up MongoDB to enable streams.' });
+  }
+  
   try {
-    const { action } = req.body; // 'increment' or 'decrement'
+    const { action } = req.body;
 
     const update = action === 'increment' 
       ? { $inc: { viewers: 1 } }

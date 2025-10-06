@@ -37,7 +37,6 @@ if (process.env.MONGODB_URI) {
 }
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
 app.use('/api/movies', require('./routes/movies'));
 app.use('/api/streams', require('./routes/streams'));
 
