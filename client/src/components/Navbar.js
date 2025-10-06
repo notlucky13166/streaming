@@ -1,29 +1,16 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { 
   FilmIcon, 
-  VideoCameraIcon, 
-  UserIcon, 
-  CogIcon,
-  HomeIcon,
-  ArrowRightOnRectangleIcon
+  VideoCameraIcon,
+  HomeIcon
 } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
     <nav className="bg-slate-800/90 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <FilmIcon className="w-5 h-5 text-white" />
@@ -33,8 +20,7 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="flex items-center space-x-8">
             <Link 
               to="/" 
               className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors"
@@ -56,49 +42,6 @@ const Navbar = () => {
               <VideoCameraIcon className="w-4 h-4" />
               <span>Live</span>
             </Link>
-          </div>
-
-          {/* User Actions */}
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                {user.role === 'admin' && (
-                  <Link 
-                    to="/admin" 
-                    className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors"
-                  >
-                    <CogIcon className="w-4 h-4" />
-                    <span className="hidden sm:inline">Admin</span>
-                  </Link>
-                )}
-                <div className="flex items-center space-x-2">
-                  <UserIcon className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-300 hidden sm:inline">{user.name}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors"
-                >
-                  <ArrowRightOnRectangleIcon className="w-4 h-4" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
-              </>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Link 
-                  to="/login" 
-                  className="text-slate-300 hover:text-white transition-colors"
-                >
-                  Login
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded-lg transition-colors"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
           </div>
         </div>
       </div>
